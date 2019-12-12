@@ -1,0 +1,7 @@
+dill>=0.2.5
+six>=1.10.0
+scipy>=1.3.0
+numpy>=1.16.0
+scikit_learn>=0.19.1
+xgboost>=0.80
+torch>=0.4.1
