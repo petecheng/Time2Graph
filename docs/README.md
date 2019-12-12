@@ -2,14 +2,14 @@
 
 Time series modeling aims to discover the temporal relationships within chronologically arranged data. It has attracted extensive research over a wide range of fields, such as image alignment <sup>[2]</sup>, speech recognition <sup>[3]</sup>, etc. The key issue here is how to extract the representative features of a time series. A large part of previous frameworks range from classical feature engineering and representation learning to deep learning based models. While these methods have achieved good performance <sup>[4, 5]</sup>, they have also been subject to criticism regarding their lack of interpretability. 
 
-###Intuition: Shapelet Dynamics
+### Intuition: Shapelet Dynamics
 
 ***Shapelets***, the time series subsequences that are representative of a class <sup>[6]</sup>, can offer directly interpretable and explanatory insights in the classification scenario, and shapelet-based models have proven to be promising in various practical domains <sup>[7,8,9]</sup>.
 
 Existing efforts have mainly considered shapelets as static. However, in the real world, shapelets are often dynamic, which is reflected in two respects: 
 
 * First, the same shapelet appearing at different time slices may have a range of different impacts. For instance, in the scenario of detecting electricity theft, low electricity consumption in summer or winter is more suspicious than it is in spring, as refrigeration or heating equipments costs more electrical power. 
-* Second, determining the ways in which shapelets evolve is vital to a full understanding of a time series. In fact, shapelets with small values at a particular time can hardly distinguish an electricity thief from a normal user who indeed regularly consumes a low level of electricity. An alternative method would involve identifying users who once had high electricity consumption shapelets but suddenly consumes very few electrical power for a while. In other words, an important clue here is how shapelets evolve over time.
+* Second, determining the ways in which shapelets evolve is vital to a full understanding of a time series. In fact, shapelets with small values at a particular time can hardly distinguish an electricity thief from a normal user who indeed consumes a low level of electricity. An alternative method would involve identifying users who once had high electricity consumption shapelets but suddenly consumes very few electrical power. In other words, an important clue here is how shapelets evolve over time.
 
 We refer to the subsequences of a time series that are able to reflect its representativeness at different time slices as *time-aware shapelets*.  Furthermore, to deeply mining the dynamics and correlations of shapelets, we propose a novel approach to learn the representations of a time series by extracting time-aware shapelets and constructing a shapelet evolution graph, referred as our AAAI'2020 paper <sup>[1]</sup>.
 
@@ -21,25 +21,25 @@ Above shows an concrete example from real-world electricity consumption record d
 
 ### Extracting Time-aware Shapelets
 
-Formally,  a shapelet $v$ is a segment that is representative of a certain class. More precisely, it can separate $T$ into two smaller sets, one that is close to $v$ and another far from $v$ by some specific criteria, such that for a time series classification task, positive and negative samples can be put into different groups. The criteria can be formalized as
+Formally,  a shapelet *v* is a segment that is representative of a certain class. More precisely, it can separate *T* into two smaller sets, one that is close to $v$ and another far from *v* by some specific criteria, such that for a time series classification task, positive and negative samples can be put into different groups. The criteria can be formalized as
 
 $$\mathcal{L} = -g(S_{pos}(v, T), S_{neg}(v, T))$$
 
-where $S_{*}(v, T)$ denotes the set of distances with respect to a specific group $T_{*}$, and the function g takes two finite sets as input, returns a scalar value to indicate how far these two sets are, and it can be *information gain*, or some dissimilarity measurements on sets, i.e., *KL* divergence. 
+where *S(v, T)​* denotes the set of distances with respect to a specific group ​*T\**, and the function *g* takes two finite sets as input, returns a scalar value to indicate how far these two sets are, and it can be *information gain*, or some dissimilarity measurements on sets, i.e., *KL* divergence. 
 
-To capture the shapelet dynamics, We define two factors for quantitatively measuring the timing effects of shapelets at different levels. Specifically, we introduce the *local factor* $w_n$ to denote the inner importance of the $n^{th}$ element of a particular shapelet, then the distance between a shapelet $v$ and a segment $s$ is redefined as
+To capture the shapelet dynamics, We define two factors for quantitatively measuring the timing effects of shapelets at different levels. Specifically, we introduce the *local factor* *w_n*​ to denote the inner importance of the *n-th* element of a particular shapelet, then the distance between a shapelet *v* and a segment *s* is redefined as
 
 $$\hat{d}(v, s|w) = \tau(v, s | a^*, w) = (\sum\nolimits_{k=1}^{p}\ w_{a^*_1(k)} \cdot (v_{a^*_1(k)} - s_{a^*_2(k)})^2)^{\frac{1}{2}}$$
 
-where $a^*$ refers to the best alignment for *DTW distance. On the other hand, at a *global level*, we aim to measure the timing effects across segments on the discriminatory power of shapelets. It is inspired from the intuition that shapelets may represent totally different meaning at different time steps, and it is straightforward to measure such deviations by adding segment-level weights. Formally, we set a *global factor* $u_m$ to capture the cross-segments influence, then the distance between a shapelet $v$ and a time series $t$ can be rewritten as 
+where *a\*​* refers to the best alignment for DTW distance. On the other hand, at a *global level*, we aim to measure the timing effects across segments on the discriminatory power of shapelets. It is inspired from the intuition that shapelets may represent totally different meaning at different time steps, and it is straightforward to measure such deviations by adding segment-level weights. Formally, we set a *global factor* *u_m*​ to capture the cross-segments influence, then the distance between a shapelet *v* and a time series *t* can be rewritten as 
 
 $$\hat{D}(v, t | w, u) = \min\nolimits_{1\le k \le m} u_k \cdot \hat{d}(v, s_k | w)$$
 
-Then given a classification task, we establish a supervised learning method to select the most important time-aware shapelets and learn corresponding timing factors $w_i$ and $u_i$ for each shapelet $v_i$. In particular, we have a pool of segments as shapelet candidates that selected from all subsequences, and a set of time series $T$ with labels. For each candidate $v$, we have the following objective function:
+Then given a classification task, we establish a supervised learning method to select the most important time-aware shapelets and learn corresponding timing factors *w_i* and *u_i* for each shapelet *v_i*. In particular, we have a pool of segments as shapelet candidates that selected from all subsequences, and a set of time series *T​* with labels. For each candidate *v*, we have the following objective function:
 
 $$\hat{\mathcal{L}} = -g(S_{pos}(v, T), S_{neg}(v, T)) + \lambda ||w|| + \epsilon ||u||$$
 
-and after learning the timing factors from shapelet candidates separately, we select the top $K$ shapelets with minimal loss as our final time-aware shapelets. 
+and after learning the timing factors from shapelet candidates separately, we select the top *K* shapelets with minimal loss as our final time-aware shapelets. 
 
 ### Constructing Shapelet Evolution Graph
 
@@ -53,15 +53,15 @@ $$p_{i, j} = \frac{
 	\max(\hat{d_{i,*}}(v_{i, *}, s_i)) - \min(\hat{d_{i,*}}(v_{i, *}, s_i))
 }$$
 
-where $\hat{d_{i,*}}(v_{i, *}, s_i) = u_*[i] * \hat{d}(v_{i, *}, s_i |w_*)$ with a predefined constraint that $\hat{d_{i, *}} \le \delta$. Then, for each pair $(j, k)$, we create a weighted edge from shapelet $v_{i, j}$ to $v_{i+1, k}$ with weight $p_{i, j} \cdot p_{i+1, k}$ , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., $v_i$ and $v_j$ into the conditional probability $P(v_j|v_i)$ that shapelet $v_i$ being transformed into $v_j$ in an adjacent time step. 
+where $$\hat{d_{i,*}}(v_{i, *}, s_i) = u_*[i] * \hat{d}(v_{i, *}, s_i|w_*)$$ with a predefined constraint that $\hat{d_{i, *}} \le \delta$. Then, for each pair *(j, k)​*, we create a weighted edge from shapelet ​*v_{i, j}* to *v_{i+1, k}* with weight *p_{i, j} x p_{i+1, k}* , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., *v_i​* and *v_j* into the conditional probability $$P(v_j|v_i)$$ that shapelet *v_i​* being transformed into *v_j* in an adjacent time step. 
 
 ### Time Series Representation Learning
 
-Finally, we learn the representations for both the shapelets and the given time series by using the shapelet evolution graph constructed as above. We first employ an existing graph embedding algorithm DeepWalk <sup>[10]</sup> to obtain vertex (shapelet) representation vectors $\mu \in \mathbb{R}^B$. Then, for each segment $s_i$ in a time series, we retrieve the embeddings of its assigned shapelets that have discussed above, and sum them up weighted by assignment probability, denoted as
+Finally, we learn the representations for both the shapelets and the given time series by using the shapelet evolution graph constructed as above. We first employ an existing graph embedding algorithm DeepWalk <sup>[10]</sup> to obtain vertex (shapelet) representation vectors $$\mu \in \mathbb{R}^B$$. Then, for each segment *s_i​* in a time series, we retrieve the embeddings of its assigned shapelets that have discussed above, and sum them up weighted by assignment probability, denoted as
 
 $$\Phi_i=(\sum\nolimits_{j}p_{i,j}\cdot\mu(v_{i,j})), \ 1 \le i \le m$$
 
-and finally concatenate or aggregate all those $m$ segment embedding vectors to obtain the representation vector $\Phi$ for original time series $t$. The time series embeddings can then be applied to various down streaming tasks, referred to the experiment section in our paper <sup>[1]</sup>.
+and finally concatenate or aggregate all those $m$ segment embedding vectors to obtain the representation vector for original time series *t*. The time series embeddings can then be applied to various down streaming tasks, referred to the experiment section in our paper <sup>[1]</sup>.
 
 ### Evaluation Results
 
