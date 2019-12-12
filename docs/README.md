@@ -21,21 +21,21 @@ Above shows an concrete example from real-world electricity consumption record d
 
 ### Extracting Time-aware Shapelets
 
-Formally,  a shapelet *v* is a segment that is representative of a certain class. More precisely, it can separate *T* into two smaller sets, one that is close to $v$ and another far from *v* by some specific criteria, such that for a time series classification task, positive and negative samples can be put into different groups. The criteria can be formalized as
+Formally,  a shapelet $$v$$ is a segment that is representative of a certain class. More precisely, it can separate $$T$$ into two smaller sets, one that is close to $$v$$ and another far from $$v$$ by some specific criteria, such that for a time series classification task, positive and negative samples can be put into different groups. The criteria can be formalized as
 
 $$\mathcal{L} = -g(S_{pos}(v, T), S_{neg}(v, T))$$
 
-where *S(v, T)​* denotes the set of distances with respect to a specific group ​*T\**, and the function *g* takes two finite sets as input, returns a scalar value to indicate how far these two sets are, and it can be *information gain*, or some dissimilarity measurements on sets, i.e., *KL* divergence. 
+where $$S_{*}(v, T)$$ denotes the set of distances with respect to a specific group $$T_{*}$$, and the function $$g$$ takes two finite sets as input, returns a scalar value to indicate how far these two sets are, and it can be *information gain*, or some dissimilarity measurements on sets, i.e., *KL* divergence. 
 
-To capture the shapelet dynamics, We define two factors for quantitatively measuring the timing effects of shapelets at different levels. Specifically, we introduce the *local factor* *w_n*​ to denote the inner importance of the *n-th* element of a particular shapelet, then the distance between a shapelet *v* and a segment *s* is redefined as
+To capture the shapelet dynamics, We define two factors for quantitatively measuring the timing effects of shapelets at different levels. Specifically, we introduce the *local factor* $$w_n$$​ to denote the inner importance of the *n-th* element of a particular shapelet, then the distance between a shapelet $$v$$ and a segment $$s$$ is redefined as
 
 $$\hat{d}(v, s|w) = \tau(v, s | a^*, w) = (\sum\nolimits_{k=1}^{p}\ w_{a^*_1(k)} \cdot (v_{a^*_1(k)} - s_{a^*_2(k)})^2)^{\frac{1}{2}}$$
 
-where *a\*​* refers to the best alignment for DTW distance. On the other hand, at a *global level*, we aim to measure the timing effects across segments on the discriminatory power of shapelets. It is inspired from the intuition that shapelets may represent totally different meaning at different time steps, and it is straightforward to measure such deviations by adding segment-level weights. Formally, we set a *global factor* *u_m*​ to capture the cross-segments influence, then the distance between a shapelet *v* and a time series *t* can be rewritten as 
+where $$a^*$$ refers to the best alignment for DTW distance. On the other hand, at a *global level*, we aim to measure the timing effects across segments on the discriminatory power of shapelets. It is inspired from the intuition that shapelets may represent totally different meaning at different time steps, and it is straightforward to measure such deviations by adding segment-level weights. Formally, we set a *global factor* $$u_m$$ to capture the cross-segments influence, then the distance between a shapelet $$v$$ and a time series $$t$$ can be rewritten as 
 
 $$\hat{D}(v, t | w, u) = \min\nolimits_{1\le k \le m} u_k \cdot \hat{d}(v, s_k | w)$$
 
-Then given a classification task, we establish a supervised learning method to select the most important time-aware shapelets and learn corresponding timing factors *w_i* and *u_i* for each shapelet *v_i*. In particular, we have a pool of segments as shapelet candidates that selected from all subsequences, and a set of time series *T​* with labels. For each candidate *v*, we have the following objective function:
+Then given a classification task, we establish a supervised learning method to select the most important time-aware shapelets and learn corresponding timing factors $$w_i$$ and $$u_i$$ for each shapelet $$v_i$$. In particular, we have a pool of segments as shapelet candidates that selected from all subsequences, and a set of time series $$T$$ with labels. For each candidate $$v$$, we have the following objective function:
 
 $$\hat{\mathcal{L}} = -g(S_{pos}(v, T), S_{neg}(v, T)) + \lambda ||w|| + \epsilon ||u||$$
 
@@ -43,9 +43,9 @@ and after learning the timing factors from shapelet candidates separately, we se
 
 ### Constructing Shapelet Evolution Graph
 
-A ***Shapelet Evolution Graph*** is a directed and weighted graph $G = (V,E)$ in which $V$ consists of $K$ vertices, each denoting a shapelet, and each directed edge $e_{i, j}\in E$ is associated with a weight $w_{i, j}$, indicating the occurrence probability of shapelet  $v_i \in V$ followed by another shapelet $v_j \in V$ in the same time series. The key idea here is that the shapelet evolution and transition patterns can be naturally reflected from the paths in the graph, then graph embedding mythologies can be applied to learn shapelet, as well as the time series representations.
+A ***Shapelet Evolution Graph*** is a directed and weighted graph $$G = (V,E)$$ in which $$V$$ consists of $$K$$ vertices, each denoting a shapelet, and each directed edge $$e_{i, j} \in E$$ is associated with a weight $$w_{i, j}$$, indicating the occurrence probability of shapelet  $$v_i \in V$$ followed by another shapelet $$v_j \in V$$ in the same time series. The key idea here is that the shapelet evolution and transition patterns can be naturally reflected from the paths in the graph, then graph embedding mythologies can be applied to learn shapelet, as well as the time series representations.
 
-We first assign each segment $s_i$ of each time series to several shapelets that have the closest distances to $ s_i$ according to the time-aware dissimilarity. In detail, we standardize the shapelet assignment probability as
+We first assign each segment $s_i$ of each time series to several shapelets that have the closest distances to $$s_i$$ according to the time-aware dissimilarity. In detail, we standardize the shapelet assignment probability as
 
 $$p_{i, j} = \frac{
 	\max(\hat{d_{i,*}}(v_{i, *}, s_i)) - \hat{d_{i,j}}(v_{i, j}, s_i)
@@ -53,11 +53,15 @@ $$p_{i, j} = \frac{
 	\max(\hat{d_{i,*}}(v_{i, *}, s_i)) - \min(\hat{d_{i,*}}(v_{i, *}, s_i))
 }$$
 
-where $$\hat{d_{i,*}}(v_{i, *}, s_i) = u_*[i] * \hat{d}(v_{i, *}, s_i|w_*)$$ with a predefined constraint that $\hat{d_{i, *}} \le \delta$. Then, for each pair *(j, k)​*, we create a weighted edge from shapelet ​*v_{i, j}* to *v_{i+1, k}* with weight *p_{i, j} x p_{i+1, k}* , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., *v_i​* and *v_j* into the conditional probability $$P(v_j|v_i)$$ that shapelet *v_i​* being transformed into *v_j* in an adjacent time step. 
+where 
+
+$$\hat{d_{i,*}}(v_{i, *}, s_i) = u_*[i] * \hat{d}(v_{i, *}, s_i | w_*)$$ 
+
+with a predefined constraint that $$\hat{d_{i, *}} \le \delta$$. Then, for each pair $$(j, k)$$, we create a weighted edge from shapelet $$v_{i, j}$$ to $$v_{i+1, k}$$ with weight $$p_{i, j} \cdot p_{i+1, k}$$ , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., $$v_i$$ and $$v_j$$ into the conditional probability $$P(v_j|v_i)$$ that shapelet $$v_i$$ being transformed into $$v_j$$ in an adjacent time step. 
 
 ### Time Series Representation Learning
 
-Finally, we learn the representations for both the shapelets and the given time series by using the shapelet evolution graph constructed as above. We first employ an existing graph embedding algorithm DeepWalk <sup>[10]</sup> to obtain vertex (shapelet) representation vectors $$\mu \in \mathbb{R}^B$$. Then, for each segment *s_i​* in a time series, we retrieve the embeddings of its assigned shapelets that have discussed above, and sum them up weighted by assignment probability, denoted as
+Finally, we learn the representations for both the shapelets and the given time series by using the shapelet evolution graph constructed as above. We first employ an existing graph embedding algorithm DeepWalk <sup>[10]</sup> to obtain vertex (shapelet) representation vectors $$\mu \in \mathbb{R}^B$$. Then, for each segment $$s_i$$ in a time series, we retrieve the embeddings of its assigned shapelets that have discussed above, and sum them up weighted by assignment probability, denoted as
 
 $$\Phi_i=(\sum\nolimits_{j}p_{i,j}\cdot\mu(v_{i,j})), \ 1 \le i \le m$$
 
