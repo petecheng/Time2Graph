@@ -45,7 +45,7 @@ and after learning the timing factors from shapelet candidates separately, we se
 
 A ***Shapelet Evolution Graph*** is a directed and weighted graph $$G = (V,E)$$ in which $$V$$ consists of $$K$$ vertices, each denoting a shapelet, and each directed edge $$e_{i, j} \in E$$ is associated with a weight $$w_{i, j}$$, indicating the occurrence probability of shapelet  $$v_i \in V$$ followed by another shapelet $$v_j \in V$$ in the same time series. The key idea here is that the shapelet evolution and transition patterns can be naturally reflected from the paths in the graph, then graph embedding mythologies can be applied to learn shapelet, as well as the time series representations.
 
-We first assign each segment $s_i$ of each time series to several shapelets that have the closest distances to $$s_i$$ according to the time-aware dissimilarity. In detail, we standardize the shapelet assignment probability as
+We first assign each segment $$s_i$$ of each time series to several shapelets that have the closest distances to $$s_i$$ according to the time-aware dissimilarity. In detail, we standardize the shapelet assignment probability as
 
 $$p_{i, j} = \frac{
 	\max(\hat{d_{i,*}}(v_{i, *}, s_i)) - \hat{d_{i,j}}(v_{i, j}, s_i)
@@ -57,7 +57,7 @@ where
 
 $$\hat{d_{i,*}}(v_{i, *}, s_i) = u_*[i] * \hat{d}(v_{i, *}, s_i | w_*)$$ 
 
-with a predefined constraint that $$\hat{d_{i, *}} \le \delta$$. Then, for each pair $$(j, k)$$, we create a weighted edge from shapelet $$v_{i, j}$$ to $$v_{i+1, k}$$ with weight $$p_{i, j} \cdot p_{i+1, k}$$ , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., $$v_i$$ and $$v_j$$ into the conditional probability $$P(v_j|v_i)$$ that shapelet $$v_i$$ being transformed into $$v_j$$ in an adjacent time step. 
+with a predefined constraint that $$\hat{d_{i, *}} \le \delta$$. Then, for each pair $$(j, k)$$, we create a weighted edge from shapelet $$v_{i, j}$$ to $$v_{i+1, k}$$ with weight $$p_{i, j} \cdot p_{i+1, k}$$ , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., $$v_i$$ and $$v_j$$ into the conditional probability $$P(v_j;v_i)$$ that shapelet $$v_i$$ being transformed into $$v_j$$ in an adjacent time step. 
 
 ### Time Series Representation Learning
 
@@ -65,7 +65,7 @@ Finally, we learn the representations for both the shapelets and the given time 
 
 $$\Phi_i=(\sum\nolimits_{j}p_{i,j}\cdot\mu(v_{i,j})), \ 1 \le i \le m$$
 
-and finally concatenate or aggregate all those $m$ segment embedding vectors to obtain the representation vector for original time series *t*. The time series embeddings can then be applied to various down streaming tasks, referred to the experiment section in our paper <sup>[1]</sup>.
+and finally concatenate or aggregate all those $$m$$ segment embedding vectors to obtain the representation vector for original time series $$t$$. The time series embeddings can then be applied to various down streaming tasks, referred to the experiment section in our paper <sup>[1]</sup>.
 
 ### Evaluation Results
 
