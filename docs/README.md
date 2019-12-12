@@ -57,7 +57,7 @@ where
 
 $$\hat{d_{i,*}}(v_{i, *}, s_i) = u_*[i] * \hat{d}(v_{i, *}, s_i | w_*)$$ 
 
-with a predefined constraint that $$\hat{d_{i, *}} \le \delta$$. Then, for each pair $$(j, k)$$, we create a weighted edge from shapelet $$v_{i, j}$$ to $$v_{i+1, k}$$ with weight $$p_{i, j} \cdot p_{i+1, k}$$ , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., $$v_i$$ and $$v_j$$ into the conditional probability $$P(v_j;v_i)$$ that shapelet $$v_i$$ being transformed into $$v_j$$ in an adjacent time step. 
+with a predefined constraint that $$\hat{d_{i, *}} \le \delta$$. Then, for each pair $$(j, k)$$, we create a weighted edge from shapelet $$v_{i, j}$$ to $$v_{i+1, k}$$ with weight $$p_{i, j} \cdot p_{i+1, k}$$ , and merge all duplicated edges as one by summing up their weights. Finally, we normalize the edge weights sourced from each node as 1, which naturally interprets the edge weight between each pair of nodes, i.e., $$v_i$$ and $$v_j$$ into the conditional probability that shapelet $$v_i$$ being transformed into $$v_j$$ in an adjacent time step. 
 
 ### Time Series Representation Learning
 
