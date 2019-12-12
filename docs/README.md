@@ -14,7 +14,7 @@ Existing efforts have mainly considered shapelets as static. However, in the rea
 We refer to the subsequences of a time series that are able to reflect its representativeness at different time slices as *time-aware shapelets*.  Furthermore, to deeply mining the dynamics and correlations of shapelets, we propose a novel approach to learn the representations of a time series by extracting time-aware shapelets and constructing a shapelet evolution graph, referred as our AAAI'2020 paper <sup>[1]</sup>.
 
 <div align="center">
-    <img src="https://raw.githubusercontent.com/petecheng/Time2Graph/master/docs/motiv.png"><br><br>
+    <img src="motiv.png"><br>
 </div>
 
 Above shows an concrete example from real-world electricity consumption record data, which may better explain our motivations: Fig. a demonstrates the one-year electricity usage of a user who has stolen electrical power from January to May while using electrical power normally in the remaining months. We assign each month the most representative shapelet at that time and present the shapelets *#72* and *#67*, along with their timing factors in Fig. b, where dark areas indicate that the corresponding shapelet is more discriminative relative to light areas. The shapelet evolution graph is presented in Fig. c, illustrating how a shapelet would transfer from one to another *in a normal case*: for the normal electricity consumption record, there is a clear path for its shapelet transition (*#90* → *#67* → *#85*) in the graph. For the abnormal data, however, the path (*#85* → *#72* → *#7*) does not exist, indicating that the connectivity of the shapelet transition path provides an evidential basis for detecting an abnormal time series. Finally, we translate the problem of learning representations of shapelets and time series into a graph embedding problem. 
@@ -72,13 +72,13 @@ and finally concatenate or aggregate all those $$m$$ segment embedding vectors t
 We conduct time series classification tasks on three public benchmarks datasets from *UCR-Archive* <sup>[11]</sup> and two real-world datasets from State Grid of China and China Telecom. Experimental results are shown in the following table:
 
 <div align="center">
-    <img src="https://raw.githubusercontent.com/petecheng/Time2Graph/master/docs/exp.png"><br><br>
+    <img src="exp.png"><br>
 </div>
 
 We have also conduct extensive ablation and observational studies to validate our proposed framework. Here we construct the shapelet evolution graphs at different time steps for deeper understanding of shapelet dynamics, seen in the figure below. It shows two graphs, one for January and another for July. In January, shapelet *#45* has large in/out degrees, and its corresponding timing factor is highlighted in January and February (dark areas). It indicates that shapelet *#45* is likely to be a common pattern at the beginning of a year. As for July, shapelet *#45* is no longer as important as it was in January. Meanwhile, shapelet *#42*, which is almost an isolated point in January, becomes very important in July. Although we do not explicitly take seasonal information into consideration when constructing shapelet evolution graphs, the inclusion of the timing factors means that they are already incorporated into the process of the graph generation. 
 
 <div align="center">
-    <img src="https://raw.githubusercontent.com/petecheng/Time2Graph/master/docs/vis.png"><br><br>
+    <img src="vis.png"><br>
 </div>
 
 

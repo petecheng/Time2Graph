@@ -18,7 +18,7 @@ This project is implemented primarily in Python 3.6, with several dependencies l
   Version 3.6.5 has been tested. Higher versions are expected be compatible with current implementation, while there may be syntax errors or conflicts under python 2.x.
 
 - [DeepWalk](https://github.com/phanein/deepwalk)
-  We use a modified version of the original implementation of *deepwalk* to satisfy the support for directed and weighted graphs. The source codes with minor modifications can be found on [Deepwalk_weighted]][https://github.com/phanein/deepwalk].
+  We use a modified version of the original implementation of *deepwalk* to satisfy the support for directed and weighted graphs. The source codes with minor modifications can be found on [weighted_deepwalk](https://github.com/petecheng/weighted_deepwalk).
 
 - [PyTorch](https://pytorch.org). 
 
@@ -62,7 +62,8 @@ usage: . [-h] [--dataset] [--n_splits] [--model_cache] [--shapelet_cache] [--gpu
 optional arguments:
   -h, --help        show this help message and exit
   --dataset         str, one of `ucr-Earthquakes`, `ucr-WormsTwoClass` and `ucr-Strawberry`, 
-                    which we have set the optimal parameters after fine-tuning. (default: `ucr-Earthquakes`)
+                    which we have set the optimal parameters after fine-tuning. 
+                    (default: `ucr-Earthquakes`)
   --n_splits        int, number of splits in cross-validation. (default: 5)
   --model_cache	    bool, whether to use a pretrained model.(default: False)
   --shapelet_cache  bool, whether to use a pretrained shapelets set.(default: False)
