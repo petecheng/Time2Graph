@@ -18,7 +18,7 @@ WTC = {
     'seg_length': 30,
     'num_segment': 30,
     'percentile': 5,
-    'no_global': True
+    'global_flag': False
 }
 
 STB = {
