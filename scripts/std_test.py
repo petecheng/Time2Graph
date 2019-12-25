@@ -31,7 +31,7 @@ if __name__ == '__main__':
         'warp': 2,
         'tflag': True,
         'mode': 'embedding',
-        'candidate_method': 'cluster'
+        'candidate_method': 'greedy'
     }
     model_options = model_args[args.dataset]
     xgb_options = xgb_args[args.dataset]

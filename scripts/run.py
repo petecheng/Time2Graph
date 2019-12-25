@@ -30,7 +30,7 @@ if __name__ == '__main__':
     parser.add_argument('--embed', type=str, default='aggregate')
     parser.add_argument('--embed_size', type=int, default=256)
     parser.add_argument('--warp', type=int, default=2)
-    parser.add_argument('--cmethod', type=str, default='cluster')
+    parser.add_argument('--cmethod', type=str, default='greedy')
     parser.add_argument('--kernel', type=str, default='xgb')
     parser.add_argument('--percentile', type=int, default=10)
     parser.add_argument('--measurement', type=str, default='gdtw')
