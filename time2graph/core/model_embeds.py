@@ -45,6 +45,7 @@ class Time2GraphEmbed(ModelUtils):
         self.debug = kwargs.pop('debug', True)
         self.measurement = kwargs.pop('measurement', 'gdtw')
         self.verbose = kwargs.pop('verbose', False)
+        self.global_flag = kwargs.pop('global_flag', True)
         self.kwargs = kwargs
         Debugger.info_print('initialize t2g model with {}'.format(self.__dict__))
 
@@ -65,7 +66,7 @@ class Time2GraphEmbed(ModelUtils):
             seg_length=self.seg_length, tflag=self.tflag, multi_graph=self.multi_graph,
             cache_dir=cache_dir, tanh=self.kwargs.get('tanh', False), debug=self.debug,
             percentile=self.percentile, measurement=self.measurement, mode=self.mode,
-            global_flag=self.kwargs.get('global_flag', True), **self.kwargs)
+            global_flag=self.global_flag, **self.kwargs)
         self.sembeds.fit(time_series_set=x[np.argwhere(y == 0).reshape(-1), :, :],
                          shapelets=self.shapelets, warp=self.warp, init=init)
 
