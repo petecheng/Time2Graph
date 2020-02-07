@@ -77,9 +77,41 @@ def time_series_embeds_factory__(embed_size, embeddings, threshold,
 
 
 class ShapeletEmbedding(object):
+    """
+    class for shapelet embeddings using weighted Deepwalk.
+    """
     def __init__(self, seg_length, tflag, multi_graph, cache_dir,
                  percentile, tanh, debug, measurement, mode, global_flag,
                  **deepwalk_args):
+        """
+        :param seg_length:
+            segment length of time series.
+        :param tflag:
+            whether to use timing factors when computing distances between shapelets.
+        :param multi_graph:
+            whether to learn embeddings for each time step. default False.
+        :param cache_dir:
+            cache directory for edge-list and embeddings.
+        :param percentile:
+            percentile for distance threshold when constructing shapelet evolution graph.
+            scale: 0~100, usually setting 5 or 10.
+        :param tanh:
+            whether to conduct tanh transformation on distance matrix (default False).
+        :param debug:
+            verbose flag.
+        :param measurement:
+            which distance measurement to use, default: greedy-dtw.
+        :param mode:
+            mode of generating time series embeddings.
+            options:
+                'concate': concatenate embeddings of all segments.
+                'aggregate': weighted-sum up embeddings of all segments.
+        :param global_flag:
+            whether to use global timing factors (default False).
+        :param deepwalk_args:
+            parameters for deepwalk.
+            e.g., representation-size, default 256.
+        """
         self.seg_length = seg_length
         self.tflag = tflag
         self.multi_graph = multi_graph
@@ -97,6 +129,18 @@ class ShapeletEmbedding(object):
         Debugger.info_print('initialize ShapeletEmbedding model with ops: {}'.format(self.__dict__))
 
     def fit(self, time_series_set, shapelets, warp, init=0):
+        """
+        generate shapelet embeddings.
+        :param time_series_set:
+            input time series.
+        :param shapelets:
+            corresponding shapelets learned from time series set.
+        :param warp:
+            warping for greedy-dtw.
+        :param init:
+            init index of time series. default 0.
+        :return:
+        """
         Debugger.info_print('fit shape: {}'.format(time_series_set.shape))
         tmat, sdist, dist_threshold = transition_matrix(
             time_series_set=time_series_set, shapelets=shapelets, seg_length=self.seg_length,
@@ -109,6 +153,18 @@ class ShapeletEmbedding(object):
             cache_dir=self.cache_dir, **self.deepwalk_args)
 
     def time_series_embedding(self, time_series_set, shapelets, warp, init=0):
+        """
+        generate time series embeddings.
+        :param time_series_set:
+            time series data.
+        :param shapelets:
+            corresponding shapelets learned from time series set.
+        :param warp:
+            warping for greedy-dtw.
+        :param init:
+            init index of time series. default 0.
+        :return:
+        """
         if self.embeddings is None:
             self.fit(time_series_set=time_series_set, shapelets=shapelets, warp=warp)
         sdist = shapelet_distance(time_series_set=time_series_set, shapelets=shapelets,

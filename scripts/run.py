@@ -7,38 +7,80 @@ from archive.load_usr_dataset import load_usr_dataset_by_name
 from time2graph.utils.base_utils import Debugger
 from time2graph.core.model import Time2Graph
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-
+"""
+    scripts for running test.
+    running command:
+        1. set PYTHONPATH environment;
+        2. python scripts/run.py **options
+        3. option list:
+            --dataset, ucr-Earthquakes/WormsTwoClass/Strawberry
+            --K, number of shapelets extracted
+            --C, number of shapelet candidates
+            --n_splits, number of splits in cross-validation
+            --num_segment, number of segment a time series is divided into
+            --seg_length, segment length
+            --njobs, number of threads in parallel
+            --data_size, data dimension of time series
+            --optimizer, optimizer used in time-aware shapelets learning
+            --alpha, penalty parameter of local timing factor
+            --beta, penalty parameter of global timing factor
+            --init, init index of time series data
+            --gpu_enable, bool, whether to use GPU
+            --opt_metric, which metric to optimize in prediction
+            --cache, whether to dump model to local file
+            --embed, which embed strategy to use (aggregate/concatenate)
+            --embed_size, embedding size of shapelets
+            --warp, warping size in greedy-dtw
+            --cmethod, which algorithm to use in candidate generation (cluster/greedy)
+            --kernel, specify outer-classifier (default xgboost)
+            --percentile, percentile for distance threshold in constructing graph
+            --measurement, which distance metric to use (default greedy-dtw)
+            --batch_size, batch size in each training step
+            --tflag, flag that whether to use timing factors
+            --scaled, flag that whether to rescale time series data
+            --norm, flag that whether to normalize extracted representations
+            --no_global, whether to use global timing factors
+"""
 
 if __name__ == '__main__':
     warnings.filterwarnings(module='sklearn*', action='ignore', category=DeprecationWarning)
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--dataset', type=str, default='ucr-Earthquakes')
-    parser.add_argument('--K', type=int, default=100)
-    parser.add_argument('--C', type=int, default=800)
-    parser.add_argument('--n_splits', type=int, default=5)
-    parser.add_argument('--num_segment', type=int, default=12)
-    parser.add_argument('--seg_length', type=int, default=30)
-    parser.add_argument('--njobs', type=int, default=8)
-    parser.add_argument('--data_size', type=int, default=1)
-    parser.add_argument('--optimizer', type=str, default='Adam')
-    parser.add_argument('--alpha', type=float, default=0.1)
-    parser.add_argument('--beta', type=float, default=0.05)
-    parser.add_argument('--init', type=int, default=0)
-    parser.add_argument('--gpu_enable', action='store_true', default=False)
-    parser.add_argument('--opt_metric', type=str, default='accuracy')
-    parser.add_argument('--cache', action='store_true', default=False)
-    parser.add_argument('--embed', type=str, default='aggregate')
-    parser.add_argument('--embed_size', type=int, default=256)
-    parser.add_argument('--warp', type=int, default=2)
-    parser.add_argument('--cmethod', type=str, default='greedy')
-    parser.add_argument('--kernel', type=str, default='xgb')
-    parser.add_argument('--percentile', type=int, default=10)
-    parser.add_argument('--measurement', type=str, default='gdtw')
-    parser.add_argument('--batch_size', type=int, default=50)
-    parser.add_argument('--tflag', action='store_false', default=True)
-    parser.add_argument('--scaled', action='store_true', default=False)
-    parser.add_argument('--norm', action='store_true', default=False)
-    parser.add_argument('--no_global', action='store_false', default=True)
+    parser.add_argument('--dataset', type=str, default='ucr-Earthquakes',
+                        help='ucr-Earthquakes/WormsTwoClass/Strawberry')
+    parser.add_argument('--K', type=int, default=100, help='number of shapelets extracted')
+    parser.add_argument('--C', type=int, default=800, help='number of shapelet candidates')
+    parser.add_argument('--n_splits', type=int, default=5, help='number of splits in cross-validation')
+    parser.add_argument('--num_segment', type=int, default=12, help='number of segment a time series is divided into')
+    parser.add_argument('--seg_length', type=int, default=30, help='segment length')
+    parser.add_argument('--njobs', type=int, default=8, help='number of threads in parallel')
+    parser.add_argument('--data_size', type=int, default=1, help='data dimension of time series')
+    parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer used in time-aware shapelets learning')
+    parser.add_argument('--alpha', type=float, default=0.1, help='penalty parameter of local timing factor')
+    parser.add_argument('--beta', type=float, default=0.05, help='penalty parameter of global timing factor')
+    parser.add_argument('--init', type=int, default=0, help='init index of time series data')
+    parser.add_argument('--gpu_enable', action='store_true', default=False, help='bool, whether to use GPU')
+    parser.add_argument('--opt_metric', type=str, default='accuracy', help='which metric to optimize in prediction')
+    parser.add_argument('--cache', action='store_true', default=False, help='whether to dump model to local file')
+    parser.add_argument('--embed', type=str, default='aggregate',
+                        help='which embed strategy to use (aggregate/concatenate)')
+    parser.add_argument('--embed_size', type=int, default=256, help='embedding size of shapelets')
+    parser.add_argument('--warp', type=int, default=2, help='warping size in greedy-dtw')
+    parser.add_argument('--cmethod', type=str, default='greedy',
+                        help='which algorithm to use in candidate generation (cluster/greedy)')
+    parser.add_argument('--kernel', type=str, default='xgb', help='specify outer-classifier (default xgboost)')
+    parser.add_argument('--percentile', type=int, default=10,
+                        help='percentile for distance threshold in constructing graph')
+    parser.add_argument('--measurement', type=str, default='gdtw',
+                        help='which distance metric to use (default greedy-dtw)')
+    parser.add_argument('--batch_size', type=int, default=50,
+                        help='batch size in each training step')
+    parser.add_argument('--tflag', action='store_false', default=True, help='flag that whether to use timing factors')
+    parser.add_argument('--scaled', action='store_true', default=False,
+                        help='flag that whether to rescale time series data')
+    parser.add_argument('--norm', action='store_true', default=False,
+                        help='flag that whether to normalize extracted representations')
+    parser.add_argument('--no_global', action='store_false', default=True,
+                        help='whether to use global timing factors')
 
     args = parser.parse_args()
     Debugger.info_print('running with {}'.format(args.__dict__))

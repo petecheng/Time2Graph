@@ -4,6 +4,9 @@ import warnings
 import os
 from config import *
 from time2graph.utils.base_utils import Debugger
+"""
+    scripts for generating java-cmd that conduct baseline algorithms.
+"""
 
 if __name__ == '__main__':
     warnings.filterwarnings(module='sklearn*', action='ignore', category=DeprecationWarning)

@@ -6,6 +6,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 
 class FeatureModel(ModelUtils):
+    """
+        Class for Handcraft-feature Model for time series classification.
+        Feature list:
+            a) mean, std of whole time series.
+            b) mean, std of each segments.
+            c) mean of the std of segments.
+            d) std of the mean of segments.
+    """
     def __init__(self, seg_length, kernel='xgb', opt_metric='f1', **kwargs):
         super(FeatureModel, self).__init__(kernel=kernel, **kwargs)
         self.clf = None

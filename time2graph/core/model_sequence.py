@@ -13,7 +13,8 @@ from ..utils.base_utils import Debugger
 class Time2GraphSequence(object):
     """
         Time2Sequence Model:
-        that is, using shapelet sequence as the input of a Sequence Model
+        that is, using shapelet sequence as the input of a Sequence Model.
+        using as a baseline in Time2Graph paper.
     """
     def __init__(self, K=100, C=1000, seg_length=30, warp=2, tflag=True,
                  hidden_size=64, output_size=64, dropout=0.1, gpu_enable=True,
@@ -56,6 +57,12 @@ class Time2GraphSequence(object):
             raise NotImplementedError()
 
     def retrieve_sequence(self, x, init):
+        """
+        generate shapelet sequence for input time series data x.
+        :param x:
+        :param init:
+        :return:
+        """
         assert self.shapelets is not None
         if len(x.shape) == 2:
             x = x.reshape(x.shape[0], x.shape[1], 1)

@@ -3,6 +3,14 @@ import numpy as np
 
 
 def greedy_dtw_path(x, y, warp, dist=lambda x, y: np.linalg.norm(x - y)):
+    """
+    generate dtw-path greedily.
+    :param x:
+    :param y:
+    :param warp:
+    :param dist:
+    :return:
+    """
     if np.ndim(x) == 1:
         x = x.reshape(-1, 1)
     if np.ndim(y) == 1:
@@ -71,6 +79,17 @@ def parameterized_gw_npy(x, y, w, warp):
 
 def pattern_distance_time_aware(pattern, time_series, local_factor, global_factor, warp,
                                 init, measurement):
+    """
+    pattern distance with timing factors in numpy.
+    :param pattern:
+    :param time_series:
+    :param local_factor:
+    :param global_factor:
+    :param warp:
+    :param init:
+    :param measurement:
+    :return:
+    """
     if measurement == 'gw':
         dist = parameterized_gw_npy
     elif measurement == 'gdtw':
@@ -89,6 +108,14 @@ def pattern_distance_time_aware(pattern, time_series, local_factor, global_facto
 
 
 def pattern_distance_no_timing(pattern, time_series, warp, measurement):
+    """
+    pattern distance without timing factor in numpy.
+    :param pattern:
+    :param time_series:
+    :param warp:
+    :param measurement:
+    :return:
+    """
     if measurement == 'gw':
         dist = parameterized_gw_npy
     elif measurement == 'gdtw':

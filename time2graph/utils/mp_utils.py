@@ -7,6 +7,11 @@ import math
 import multiprocessing as mp
 import numpy as np
 from .base_utils import Debugger
+"""
+    paralleling utils.
+    modified on the version implemented by Lekui Zhou (luckiezhou@zju.edu.cn)
+"""
+
 
 NJOBS = mp.cpu_count()
 if NJOBS >= 20:

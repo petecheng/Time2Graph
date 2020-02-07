@@ -4,6 +4,14 @@ from config import *
 
 
 def load_usr_dataset_by_name(fname, length):
+    """
+    load UCR dataset given dataset name.
+    :param fname:
+        dataset name, e.g., Earthquakes.
+    :param length:
+        time series length that want to load in.
+    :return:
+    """
     dir_path = '{}/dataset/UCRArchive_2018'.format(module_path)
     assert path.isfile('{}/{}/{}_TEST.tsv'.format(dir_path, fname, fname)), '{} NOT EXIST in UCR!'.format(fname)
     train_data = pandas.read_csv('{}/{}/{}_TRAIN.tsv'.format(dir_path, fname, fname), sep='\t', header=None)

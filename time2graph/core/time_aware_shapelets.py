@@ -12,6 +12,15 @@ from .distance_utils import *
 
 
 def parameterized_gw_torch(x, y, w, torch_dtype, warp=2):
+    """
+    gw distance in torch with timing factors.
+    :param x:
+    :param y:
+    :param w:
+    :param torch_dtype:
+    :param warp:
+    :return:
+    """
     distance = np.sum((x.reshape(x.shape[0], -1, x.shape[1]) - expand_array(y=y, warp=warp)) ** 2,
                       axis=1)
     assert not torch.any(torch.isnan(w)), 'local: {}'.format(w)
@@ -21,6 +30,15 @@ def parameterized_gw_torch(x, y, w, torch_dtype, warp=2):
 
 
 def parameterized_gdtw_torch(x, y, w, torch_dtype, warp=2):
+    """
+    greedy-dtw distance in torch with timing factors.
+    :param x:
+    :param y:
+    :param w:
+    :param torch_dtype:
+    :param warp:
+    :return:
+    """
     dpath = greedy_dtw_path(x=x, y=y, warp=warp)
     return torch.norm((torch.from_numpy(x).type(torch_dtype) * w.reshape(x.shape[0], -1))[dpath[0]] -
                       torch.from_numpy(y[dpath[1]]).type(torch_dtype))
@@ -28,6 +46,18 @@ def parameterized_gdtw_torch(x, y, w, torch_dtype, warp=2):
 
 def pattern_distance_torch(pattern, time_series, num_segment, seg_length,
                            local_factor, global_factor, torch_dtype, measurement):
+    """
+    compute distances between a pattern and a given time series.
+    :param pattern:
+    :param time_series:
+    :param num_segment:
+    :param seg_length:
+    :param local_factor:
+    :param global_factor:
+    :param torch_dtype:
+    :param measurement:
+    :return:
+    """
     if measurement == 'gw':
         dist_torch = parameterized_gw_torch
     elif measurement == 'gdtw':
@@ -46,6 +76,28 @@ def pattern_distance_torch(pattern, time_series, num_segment, seg_length,
 def __shapelet_candidate_loss(cand, time_series_set, label, num_segment, seg_length,
                               data_size, p, lr, alpha, beta, num_batch, gpu_enable,
                               measurement, **kwargs):
+    """
+    loss for learning time-aware shapelets.
+    :param cand:
+    :param time_series_set:
+    :param label:
+    :param num_segment:
+    :param seg_length:
+    :param data_size:
+    :param p:
+        normalizing parameter (0, 1, or 2).
+    :param lr:
+        learning rate.
+    :param alpha:
+        penalty weight for local timing factor.
+    :param beta:
+        penalty weight for global timing factor.
+    :param num_batch:
+    :param gpu_enable:
+    :param measurement:
+    :param kwargs:
+    :return:
+    """
     if gpu_enable:
         torch_dtype = torch.cuda.FloatTensor
     else:
@@ -164,6 +216,23 @@ def __shapelet_candidate_loss(cand, time_series_set, label, num_segment, seg_len
 def __shapelet_candidate_loss_factory(time_series_set, label, num_segment,
                                       seg_length, data_size, p, lr, alpha, beta, num_batch,
                                       gpu_enable, measurement, **kwargs):
+    """
+    paralleling compute shapelet losses.
+    :param time_series_set:
+    :param label:
+    :param num_segment:
+    :param seg_length:
+    :param data_size:
+    :param p:
+    :param lr:
+    :param alpha:
+    :param beta:
+    :param num_batch:
+    :param gpu_enable:
+    :param measurement:
+    :param kwargs:
+    :return:
+    """
     def __main__(pid, args, queue):
         ret = []
         for cand in args:
@@ -181,6 +250,29 @@ def __shapelet_candidate_loss_factory(time_series_set, label, num_segment,
 
 def learn_time_aware_shapelets(time_series_set, label, K, C, num_segment, seg_length, data_size,
                                p, lr, alpha, beta, num_batch, gpu_enable, measurement, **kwargs):
+    """
+    learn time-aware shapelets.
+    :param time_series_set:
+        input time series data.
+    :param label:
+        input label.
+    :param K:
+        number of shapelets that finally learned.
+    :param C:
+        number of shapelet candidates in learning procedure.
+    :param num_segment:
+    :param seg_length:
+    :param data_size:
+    :param p:
+    :param lr:
+    :param alpha:
+    :param beta:
+    :param num_batch:
+    :param gpu_enable:
+    :param measurement:
+    :param kwargs:
+    :return:
+    """
     cands = generate_shapelet_candidate(time_series_set=time_series_set, num_segment=num_segment,
                                         seg_length=seg_length, candidate_size=C, **kwargs)
     parmap = ParMap(

@@ -50,6 +50,20 @@ class Time2GraphEmbed(ModelUtils):
         Debugger.info_print('initialize t2g model with {}'.format(self.__dict__))
 
     def learn_shapelets(self, x, y, num_segment, data_size, num_batch):
+        """
+        learn time-aware shapelets.
+        :param x:
+            input time series data.
+        :param y:
+            input label.
+        :param num_segment:
+            number of segments that time series are divided into.
+        :param data_size:
+            data dimension of time series.
+        :param num_batch:
+            number of batch in training.
+        :return:
+        """
         assert x.shape[1] == num_segment * self.seg_length
         if self.tflag:
             self.shapelets = learn_time_aware_shapelets(
@@ -61,6 +75,18 @@ class Time2GraphEmbed(ModelUtils):
             raise NotImplementedError()
 
     def fit_embedding_model(self, x, y, cache_dir, init=0):
+        """
+        fit embedding model (learn shapelet embeddings).
+        :param x:
+            input time series data.
+        :param y:
+            input label.
+        :param cache_dir:
+            cache directory that saving edgelist and embedding results.
+        :param init:
+            init index of time series for processing. default as 0.
+        :return:
+        """
         assert self.shapelets is not None, 'shapelets has not been learnt yet'
         self.sembeds = ShapeletEmbedding(
             seg_length=self.seg_length, tflag=self.tflag, multi_graph=self.multi_graph,
@@ -80,6 +106,31 @@ class Time2GraphEmbed(ModelUtils):
 
     def fit(self, X, Y, n_splits=5, init=0, reset=True, balanced=True, norm=False,
             cache_dir='./', **kwargs):
+        """
+        fit the whole embeds model.
+        :param X:
+            input time series data.
+        :param Y:
+            input label.
+        :param n_splits:
+            number of splits in cross validation.
+        :param init:
+            init index. default as 0.
+        :param reset:
+            bool, whether to reset shapelets or embedding cache.
+            if True, re-learn shapelets and their embeddings.
+        :param balanced:
+            bool, whether to balance the pos/neg during fitting classifier.
+        :param norm:
+            whether to norm the embeddings.
+        :param cache_dir:
+            cache directory for edge-list and embeddings.
+        :param kwargs:
+            tuning: bool, whether to tune the parameters of outer-classifier(xgb).
+            opt_args: dict, if tuning is False, opt_args must be given that
+                the optimal parameters of outer-classifier should be pre-defined.
+        :return:
+        """
         num_segment = int(X.shape[1] / self.seg_length)
         data_size = X.shape[-1]
         if reset or self.shapelets is None:

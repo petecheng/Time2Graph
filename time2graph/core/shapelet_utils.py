@@ -8,11 +8,22 @@ __tmat_threshold = 1e-2
 
 
 def softmax_np(x):
+    """
+    softmax for numpy array on axis 0.
+    :param x:
+    :return:
+    """
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum(axis=0)
 
 
 def __candidate_cluster_factory(n_clusters, seg_length):
+    """
+    generate shapelets candidates by clustering.
+    :param n_clusters:
+    :param seg_length:
+    :return:
+    """
     def __main__(pid, args, queue):
         ret = []
         for time_series_segments in args:
@@ -24,6 +35,12 @@ def __candidate_cluster_factory(n_clusters, seg_length):
 
 
 def __candidate_greedy_factory(n_candiates, seg_length):
+    """
+    generate shapelets candidates by greedy algorithms.
+    :param n_candiates:
+    :param seg_length:
+    :return:
+    """
     def __main__(pid, args, queue):
         ret = []
         for time_series_segments in args:
@@ -49,6 +66,17 @@ def __candidate_greedy_factory(n_candiates, seg_length):
 
 
 def generate_shapelet_candidate(time_series_set, num_segment, seg_length, candidate_size, **kwargs):
+    """
+    generate shapelet candidates.
+    :param time_series_set:
+    :param num_segment:
+    :param seg_length:
+    :param candidate_size:
+    :param kwargs:
+        candidate_method: 'greedy' or 'cluster'.
+        debug: bool.
+    :return:
+    """
     __method, __debug = kwargs.get('candidate_method', 'greedy'), kwargs.get('debug', True)
     njobs = kwargs.get('njobs', NJOBS)
     Debugger.debug_print('begin to generate shapelet candidates...', __debug)
@@ -79,6 +107,21 @@ def generate_shapelet_candidate(time_series_set, num_segment, seg_length, candid
 
 def __shapelet_distance_factory(shapelets, num_segment, seg_length, tflag,
                                 init, warp, dist, global_flag):
+    """
+    factory for computing distances between shapelet and time series.
+    :param shapelets:
+        learned time-aware shapelets.
+    :param num_segment:
+    :param seg_length:
+    :param tflag:
+    :param init:
+    :param warp:
+    :param dist:
+        metric for computing distance.
+    :param global_flag:
+        whether to use global timing factors.
+    :return:
+    """
     def __main__(pid, args, queue):
         ret = []
         for time_series in args:
@@ -106,6 +149,21 @@ def __shapelet_distance_factory(shapelets, num_segment, seg_length, tflag,
 
 def shapelet_distance(time_series_set, shapelets, seg_length, tflag, tanh, debug, init,
                       warp, measurement, global_flag):
+    """
+    paralleling compute distances between time series and shapelets.
+    :param time_series_set:
+    :param shapelets:
+    :param seg_length:
+    :param tflag:
+    :param tanh:
+    :param debug:
+    :param init:
+    :param warp:
+    :param measurement:
+    :param global_flag:
+    :return:
+        distance matrix.
+    """
     num_time_series = time_series_set.shape[0]
     num_segment = int(time_series_set.shape[1] / seg_length)
     num_shapelet = len(shapelets)
@@ -133,6 +191,26 @@ def shapelet_distance(time_series_set, shapelets, seg_length, tflag, tanh, debug
 
 def transition_matrix(time_series_set, shapelets, seg_length, tflag, multi_graph,
                       percentile, threshold, tanh, debug, init, warp, measurement, global_flag):
+    """
+    compute shapelet transition matrix.
+    :param time_series_set:
+    :param shapelets:
+    :param seg_length:
+    :param tflag:
+    :param multi_graph:
+    :param percentile:
+        percentile for distance threshold.
+    :param threshold:
+        distance threshold.
+        only work when percentile is None.
+    :param tanh:
+    :param debug:
+    :param init:
+    :param warp:
+    :param measurement:
+    :param global_flag:
+    :return:
+    """
     num_time_series = time_series_set.shape[0]
     num_segment = int(time_series_set.shape[1] / seg_length)
     num_shapelet = len(shapelets)
@@ -186,6 +264,12 @@ def transition_matrix(time_series_set, shapelets, seg_length, tflag, multi_graph
 
 
 def __mat2edgelist(tmat, fpath):
+    """
+    transform matrix to edge-list format that Deepwalk needs.
+    :param tmat:
+    :param fpath:
+    :return:
+    """
     mat_shape = tmat.shape
     with open(fpath, 'w') as f:
         for src in range(mat_shape[0]):
@@ -201,6 +285,13 @@ def __mat2edgelist(tmat, fpath):
 
 
 def __embedding2mat(fpath, num_vertices, embed_size):
+    """
+    loading embeddings from cache file into a numpy array.
+    :param fpath:
+    :param num_vertices:
+    :param embed_size:
+    :return:
+    """
     mat = np.zeros((num_vertices, embed_size), dtype=np.float32)
     with open(fpath, 'r') as f:
         cnt = -1
@@ -217,6 +308,16 @@ def __embedding2mat(fpath, num_vertices, embed_size):
 
 
 def graph_embedding(tmat, num_shapelet, embed_size, cache_dir, **deepwalk_paras):
+    """
+    conduct Deepwalk to generate shapelet embeddings.
+    :param tmat:
+    :param num_shapelet:
+    :param embed_size:
+    :param cache_dir:
+    :param deepwalk_paras:
+        optional deepwalk parameters.
+    :return:
+    """
     __deepwalk_args__ = []
     Debugger.info_print('embed_size: {}'.format(embed_size))
     ret = []

@@ -119,15 +119,19 @@ class Time2Graph(ModelUtils):
     def fit(self, X, Y, n_splits=5, balanced=True, cache_dir='{}/scripts/cache/'.format(module_path), **kwargs):
         """
         @param X:
-            ndarray with shape (N x L x data_size), input time series
+            ndarray with shape (N x L x data_size), input time series.
         @param Y:
-            ndarray with shape (N x 1), labels
+            ndarray with shape (N x 1), labels.
         @param n_splits:
-            int, number of splits in cross-validation
+            int, number of splits in cross-validation.
         @param balanced:
             bool, whether to balance the pos/neg during fitting classifier.
         @param cache_dir:
             str, cache dir for graph embeddings.
+        @param kwargs:
+            tuning: bool, whether to tune the parameters of outer-classifier(xgb).
+            opt_args: dict, if tuning is False, opt_args must be given that
+                the optimal parameters of outer-classifier should be pre-defined.
         """
         # fit data scaler
         for k in range(self.data_size):
@@ -205,13 +209,37 @@ class Time2Graph(ModelUtils):
         self.clf.fit(x, Y)
 
     def predict(self, X, **kwargs):
+        """
+        :param X:
+            input, with shape [N, T, data_size].
+        :param kwargs:
+            ignore.
+        :return:
+            predicted label, predicted probability.
+        """
         x = self.extract_features(X=X, init=self.init)
         return self.clf.predict(x), self.clf.predict_proba(x)[:, 1]
 
     def save_model(self, fpath, **kwargs):
+        """
+        dump model to a specific path.
+        :param fpath:
+            saving path.
+        :param kwargs:
+            ignore.
+        :return:
+        """
         pickle.dump(self.__dict__, open(fpath, 'wb'))
 
     def load_model(self, fpath, **kwargs):
+        """
+        save model from a given cache file.
+        :param fpath:
+            loading path.
+        :param kwargs:
+            ignore.
+        :return:
+        """
         paras = pickle.load(open(fpath, 'rb'))
         for key, val in paras.items():
             self.__dict__[key] = val

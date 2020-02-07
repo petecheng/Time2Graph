@@ -2,8 +2,17 @@
 import numpy as np
 from os import path
 from time2graph.utils.base_utils import Debugger
+"""
+    configuration file for benchmark datasets from UCR.
+        Earthquakes (EQS).
+        WormsTwoClass (WTC).
+        StrawBerry (STB).
+    including hyper-parameters and optimal arguments in xgboost.
+"""
 
 module_path = path.dirname(path.abspath(__file__))
+
+
 EQS = {
     'K': 50,
     'C': 800,

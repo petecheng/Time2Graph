@@ -22,6 +22,9 @@ class NumpyDataset(Dataset):
 
 
 class StratifiedSampler(WeightedRandomSampler):
+    """
+    Stratified Sampler in torch.
+    """
     def __init__(self, label, num_class):
         self.num_class = num_class
         weights = self.__get_weight(label=label)

@@ -6,6 +6,9 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from ...utils.base_utils import Debugger
+"""
+    utils for deep models.
+"""
 
 
 def latent_loss(z_mean, z_std):

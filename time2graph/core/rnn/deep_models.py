@@ -4,6 +4,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
+"""
+    implement the LSTM, GRU, VAE and MLP as baselines.
+"""
 
 
 class LSTMClassifier(nn.Module):
